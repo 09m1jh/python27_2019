@@ -1,0 +1,23 @@
+import matplotlib.pyplot as plt
+import math
+import numpy as np
+n = input('슬릿 개수를 입력해주세요') # 파장 변수: 위상차, 진폭, 파장
+if int(n) > 2:
+    print('아직 해결할 수 없는 문제입니다.')
+else:
+    
+    d = float(input('슬릿 두께를 입력해주세요'))*10**-6
+    ramda = 750 * (10**-9)
+    k = 2*math.pi/ramda 
+    L = 1
+    if int(n) == 1 :
+        x = np.linspace(-10,-0.1,100) + np.linspace(0.1,10,100)
+        y = [((math.sin((k*d*i)/((L**2+i**2)**0.5)/2)**2)/((k*d*i/(L**2+i**2)**0.5/2)**2)) for i in x]
+        plt.plot(x,y)
+        plt.show()
+    if int(n) == 2 :
+        a = float(input('슬릿 사이 간격을 입력해주세요'))*10**-2 
+        x = np.linspace(-10,-0.1,100) + np.linspace(0.1,10,100)
+        y = [((math.sin((k*d*i)/((L**2+i**2)**0.5)/2)**2)/((k*d*i/(L**2+i**2)**0.5/2)**2))*(math.cos(k*a*i/(L**2+i**2)**0.5/2)**2) for i in x]
+        plt.plot(x,y)
+        plt.show()
