@@ -1,23 +1,57 @@
+%matplotlib auto
 import matplotlib.pyplot as plt
 import math
 import numpy as np
-n = input('슬릿 개수를 입력해주세요') # 파장 변수: 위상차, 진폭, 파장
-if int(n) > 2:
+
+n = input('슬릿 개수를 입력해주세요 : ') # 파장 변수: 위상차, 진폭, 파장
+n = int(n)
+if n > 3:
     print('아직 해결할 수 없는 문제입니다.')
-else:
     
-    d = float(input('슬릿 두께를 입력해주세요'))*10**-6
-    ramda = 750 * (10**-9)
-    k = 2*math.pi/ramda 
-    L = 1
-    if int(n) == 1 :
-        x = np.linspace(-10,-0.1,100) + np.linspace(0.1,10,100)
-        y = [((math.sin((k*d*i)/((L**2+i**2)**0.5)/2)**2)/((k*d*i/(L**2+i**2)**0.5/2)**2)) for i in x]
-        plt.plot(x,y)
+else:
+    d = float(input('슬릿 폭을 입력해주세요. \n마이크로미터 단위로 입력해 주세요 : '))*(10**-6)
+    lamda = 750 * (10 ** -9) #파장은 모두 750nm 로 setting 되어 있음
+    k = 2*math.pi/lamda #파수 (2pi/파장)
+    L = 2 #슬릿 ~ 스크린 까지의 거리 (단위 : m)
+    y1 = []
+    if n == 1 :
+        x = np.linspace(-10,-0.1,100) + np.linspace(0.1,10,100) # x축 눈금 설정
+        for i in x:
+            alpha = (k * d * i / ((L ** 2 + i ** 2) ** 0.5) / 2)
+            y1.append((math.sin(alpha)/alpha) ** 2) #근사식을 사용하지 않은 경우 계산
+        
+        y2 = [((math.sin((d * k * i) / (2 * L))) ** 2 / ((d * k * i / (2 * L))) ** 2) for i in x] 
+             #sinθ ≅ tanθ 로 근사한 경우의 계산
+        
+        plt.plot(x, y1, label = '''No approximation''')
+        plt.plot(x, y2, label = 'Use approximation')
+        plt.legend(loc = 'upper left')
+        plt.title('Single Slit')
         plt.show()
-    if int(n) == 2 :
-        a = float(input('슬릿 사이 간격을 입력해주세요'))*10**-2 
+        
+    if n == 2 :
+        a = float(input('두 개의 슬릿 사이 간격을 입력해주세요\ncm 단위로 입력해 주세요 : '))*10**-2 
+        print("\n")
+        print("이중 슬릿의 경우 회절 간섭 결과로 나타납니다.")
         x = np.linspace(-10,-0.1,100) + np.linspace(0.1,10,100)
-        y = [((math.sin((k*d*i)/((L**2+i**2)**0.5)/2)**2)/((k*d*i/(L**2+i**2)**0.5/2)**2))*(math.cos(k*a*i/(L**2+i**2)**0.5/2)**2) for i in x]
-        plt.plot(x,y)
+        
+        for i in x:
+            alpha = (k * d * i / ((L ** 2 + i ** 2) ** 0.5) / 2)
+            beta = (k * a * i / ((L ** 2 + i ** 2) ** 0.5) / 2)
+            y1.append(((math.sin(alpha)/alpha) ** 2) * ((math.cos(beta)) ** 2))
+        
+        y2 = [((math.sin(d * k * i / (2 * L)) / (d * k * i / (2 * L))) ** 2) * (math.cos((a * k * i) / (2 * L))) ** 2 for i in x]
+        
+        plt.plot(x, y1, label = '''No approximation''')
+        plt.plot(x, y2, label = 'Use approximation')
+        plt.legend(loc = 'upper left')
+        plt.title('Double Slit')
+        plt.show()
+    
+    if n == 3:
+        x = np.linspace(-10,-0.1,100) + np.linspace(0.1,10,100)
+        y = [math.cos(1.5 * d * k * i / (2 * L)) * math.cos(0.5 * d * k * i / (2 * L)) for i in x]
+        
+        plt.plot(x, y)
+        plt.title('Triple Slit')
         plt.show()
